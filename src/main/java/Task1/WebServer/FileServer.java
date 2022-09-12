@@ -2,10 +2,7 @@ package Task1.WebServer;
 
 import Task1.Validators.FileAccessForReadingValidator;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Path;
@@ -32,19 +29,20 @@ public class FileServer {
     public void start() {
         try {
             while (true) {
-
                 System.out.println("Server started...");
                 Socket client = server.accept();
                 System.out.println("Socket accepted...");
 
-                Scanner input = new Scanner(client.getInputStream());
-                String startingLine = input.nextLine();
+                BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                String startingLine = input.readLine();
                 System.out.printf("Starting line: %s%n", startingLine);
                 Path url = Paths.get(getUrl(startingLine));
                 Path appName = url.getParent();
 
                 if (!appName.equals(Paths.get("/app/hello"))) {
-                    return;
+                    System.out.println("Not supported app!");
+                    client.close();
+                    continue;
                 }
 
                 Path targetName = url.getFileName();
@@ -65,7 +63,7 @@ public class FileServer {
                 os.write(responce.getBytes());
                 os.write(content);
                 os.flush();
-                System.out.println("File was sended.");
+                System.out.println("File was sent.");
 
                 client.close();
             }
