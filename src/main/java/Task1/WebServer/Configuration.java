@@ -1,4 +1,7 @@
-package WebServer;
+package Task1.WebServer;
+
+import Task1.Validators.DirectoryAccessForReadingValidator;
+import Task1.Validators.FileAccessForReadingValidator;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,17 +20,7 @@ public class Configuration {
     private Path root;
 
     public Configuration() throws FileNotFoundException {
-        if (!CONFIGURATION.toFile().exists()) {
-            throw new FileNotFoundException("Configuration file not found");
-        }
-
-        if (!CONFIGURATION.toFile().isFile()) {
-            throw new IllegalArgumentException("Configuration path doesn't lead to a file");
-        }
-
-        if (!CONFIGURATION.toFile().canRead()) {
-            throw new RuntimeException("Configuration file isn't readable");
-        }
+        new FileAccessForReadingValidator(CONFIGURATION.toFile()).validate();
 
         Scanner scanner = new Scanner(new FileInputStream(CONFIGURATION.toFile()));
         while (scanner.hasNextLine()) {
@@ -59,19 +52,7 @@ public class Configuration {
 
     private Path parseRoot(String input) throws FileNotFoundException {
         Path inputRoot = Paths.get(input);
-
-        if (!inputRoot.toFile().exists()) {
-            throw new FileNotFoundException("Root directory not found");
-        }
-
-        if (!inputRoot.toFile().isDirectory()) {
-            throw new IllegalArgumentException("Root path doesn't lead to a directory: " + inputRoot);
-        }
-
-        if (!inputRoot.toFile().canRead()) {
-            throw new RuntimeException("Root directory isn't readable");
-        }
-
+        new DirectoryAccessForReadingValidator(inputRoot.toFile()).validate();
         return inputRoot;
     }
 
