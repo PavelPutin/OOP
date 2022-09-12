@@ -1,2 +1,2 @@
-port: 8080
+port: 3345
 root: C:\Users\Pavel\Desktop\app\web

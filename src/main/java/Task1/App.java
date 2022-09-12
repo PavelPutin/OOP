@@ -2,9 +2,14 @@ package Task1;
 
 import Task1.WebServer.FileServer;
 
+import java.io.IOException;
+
 public class App {
     public static void main(String[] args) {
-        FileServer fs = new FileServer();
-        fs.start();
+        try (FileServer fs = new FileServer()) {
+            fs.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
