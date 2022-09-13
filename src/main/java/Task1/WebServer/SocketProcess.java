@@ -53,7 +53,7 @@ public class SocketProcess implements Runnable {
                 }
             } else {
                 content = "Not supported app!".getBytes();
-                System.out.println("Client had tried to ");
+                System.out.println("Client requested to unexisted app");
             }
             String responce = "HTTP 200 OK\r\n" +
                     "Content-length: " + content.length + "\r\n" +
@@ -84,6 +84,6 @@ public class SocketProcess implements Runnable {
     }
 
     private boolean isHelloApp(Path appName) {
-        return appName.equals(Paths.get("/app/hello"));
+        return appName.equals(Paths.get(configuration.getAppName()));
     }
 }

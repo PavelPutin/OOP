@@ -13,6 +13,7 @@ public class Configuration {
     public final Path CONFIGURATION = Paths.get("C:\\Users\\Pavel\\Desktop\\Reepositories\\OOP\\file_server_configuration.txt");
     private Integer port;
     private Path root;
+    private String appName;
 
     public Configuration() throws FileNotFoundException {
         new FileAccessForReadingValidator(CONFIGURATION.toFile()).validate();
@@ -28,6 +29,9 @@ public class Configuration {
             if (parameter.getName().equals("root")) {
                 root = parseRoot(parameter.getValue());
             }
+            if (parameter.getName().equals("appname")) {
+                appName = parseAppName(parameter.getValue());
+            }
         }
     }
 
@@ -39,6 +43,10 @@ public class Configuration {
         return root;
     }
 
+    public String getAppName() {
+        return appName;
+    }
+
     private Path parseRoot(String input) throws FileNotFoundException {
         Path inputRoot = Paths.get(input);
         new DirectoryAccessForReadingValidator(inputRoot.toFile()).validate();
@@ -47,5 +55,9 @@ public class Configuration {
 
     private Integer parsePort(String input) {
         return Integer.valueOf(input);
+    }
+
+    private String parseAppName(String value) {
+        return value;
     }
 }
