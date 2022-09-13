@@ -35,40 +35,49 @@ public class SocketProcess implements Runnable {
             Path appName = url.getParent();
 
             byte[] content;
+            boolean fileWasRead = false;
             if (isHelloApp(appName)) {
                 Path targetName = url.getFileName();
                 Path target = configuration.getRoot().resolve(targetName);
 
-                System.out.printf("Try to send file %s%n", target);
+                System.out.printf("Try to send file %s%n", targetName);
 
                 try {
                     new FileAccessForReadingValidator(target.toFile()).validate();
-
                     FileInputStream fis = new FileInputStream(target.toFile());
                     content = fis.readAllBytes();
-                    System.out.println("File was sent successfully");
+                    fileWasRead = true;
                 } catch (Exception e) {
                     content = "There isn't such file".getBytes();
-                    System.out.println("File was not sent");
                 }
             } else {
                 content = "Not supported app!".getBytes();
-                System.out.println("Client requested to unexisted app");
+                System.out.println("Client requested to unexcited app");
             }
-            String responce = "HTTP 200 OK\r\n" +
-                    "Content-length: " + content.length + "\r\n" +
-                    "Connection: close\r\n\r\n";
 
+            sendResponce(content);
+            if (fileWasRead) {
+                System.out.println("File was sent successfully");
+            } else {
+                System.out.println("File was not sent");
+            }
 
-            OutputStream os = client.getOutputStream();
-            os.write(responce.getBytes());
-            os.write(content);
-            os.flush();
             client.close();
             System.out.println("Connection closed.");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void sendResponce(byte[] content) throws IOException {
+        String responce = "HTTP 200 OK\r\n" +
+                "Content-length: " + content.length + "\r\n" +
+                "Connection: close\r\n\r\n";
+
+        OutputStream os = client.getOutputStream();
+        os.write(responce.getBytes());
+        os.write(content);
+        os.flush();
     }
 
     private Path getUrl(String startingLine) throws IOException {

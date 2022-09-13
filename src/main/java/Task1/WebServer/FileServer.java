@@ -17,7 +17,7 @@ public class FileServer {
 
     public void start() {
         try (ServerSocket server = new ServerSocket(configuration.getPort())) {
-            System.out.println("Server started...");
+            System.out.println(String.format("Server started at port %d...", configuration.getPort()));
             while (true) {
                 Socket client = server.accept();
                 /*@Thanks FelixDes*/
