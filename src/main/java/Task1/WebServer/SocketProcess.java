@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SocketProcess implements Runnable {
-    private final Pattern REQUESTED_URL = Pattern.compile("(?<=GET\\s)/.*(?=\\sHTTP/1.1)");
+    private final Pattern REQUESTED_URL = Pattern.compile("(?<=GET\\s).*(?=\\sHTTP/1.1)");
 
     private final Socket client;
     private final Configuration configuration;
@@ -39,6 +39,7 @@ public class SocketProcess implements Runnable {
         String startingLine = input.nextLine();
         System.out.printf("Starting line: %s%n", startingLine);
         Path url = Paths.get(getUrl(startingLine));
+        System.out.println(url);
         Path appName = url.getParent();
         System.out.println(appName);
 

@@ -20,6 +20,7 @@ public class FileServer {
             System.out.println("Server started...");
             while (true) {
                 Socket client = server.accept();
+                /*@Thanks FelixDes*/
                 new Thread(new SocketProcess(client, configuration)).start();
             }
         } catch (IOException e) {
