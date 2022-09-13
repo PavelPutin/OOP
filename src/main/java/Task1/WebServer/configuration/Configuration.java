@@ -1,7 +1,7 @@
-package Task1.WebServer;
+package Task1.WebServer.configuration;
 
-import Task1.Validators.DirectoryAccessForReadingValidator;
-import Task1.Validators.FileAccessForReadingValidator;
+import Task1.Validators.FileValidators.DirectoryAccessForReadingValidator;
+import Task1.Validators.FileValidators.FileAccessForReadingValidator;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,11 +11,6 @@ import java.util.Scanner;
 
 public class Configuration {
     public final Path CONFIGURATION = Paths.get("C:\\Users\\Pavel\\Desktop\\Reepositories\\OOP\\file_server_configuration.txt");
-    private final String PARAMETER = "^\\w+";
-    private final String DELIMITER = ":\\s*";
-    private final String VALUE = ".+$";
-    private final String VALID_LINE = PARAMETER + DELIMITER + VALUE;
-
     private Integer port;
     private Path root;
 
@@ -24,20 +19,14 @@ public class Configuration {
 
         Scanner scanner = new Scanner(new FileInputStream(CONFIGURATION.toFile()));
         while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            if (!line.matches(VALID_LINE)) {
-                throw new RuntimeException("Configuration file has invalid lines: " + line);
-            }
+            String rawInput = scanner.nextLine();
+            Parameter parameter = new Parameter(rawInput);
 
-            String[] splitLine = line.split(DELIMITER, 2);
-            String parameter = splitLine[0];
-            String value = splitLine[1];
-
-            if (parameter.equals("port")) {
-                port = parsePort(value);
+            if (parameter.getName().equals("port")) {
+                port = parsePort(parameter.getValue());
             }
-            if (parameter.equals("root")) {
-                root = parseRoot(value);
+            if (parameter.getName().equals("root")) {
+                root = parseRoot(parameter.getValue());
             }
         }
     }

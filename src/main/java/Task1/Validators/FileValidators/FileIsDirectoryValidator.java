@@ -1,4 +1,4 @@
-package Task1.Validators;
+package Task1.Validators.FileValidators;
 
 import java.io.File;
 import java.io.FileNotFoundException;

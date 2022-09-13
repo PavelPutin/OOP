@@ -1,4 +1,6 @@
-package Task1.Validators;
+package Task1.Validators.FileValidators;
+
+import Task1.Validators.Validator;
 
 import java.io.File;
 

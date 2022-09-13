@@ -1,6 +1,7 @@
 package Task1.WebServer;
 
-import Task1.Validators.FileAccessForReadingValidator;
+import Task1.Validators.FileValidators.FileAccessForReadingValidator;
+import Task1.WebServer.configuration.Configuration;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -68,6 +69,7 @@ public class SocketProcess implements Runnable {
             os.write(responce.getBytes());
             os.write(content);
             os.flush();
+            client.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
