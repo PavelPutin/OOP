@@ -26,63 +26,64 @@ public class SocketProcess implements Runnable {
 
     @Override
     public void run() {
-
-        System.out.printf("Socket %s accepted...%n", client);
-
-        Scanner input = null;
         try {
-            input = new Scanner(client.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Get scanner");
-        String startingLine = input.nextLine();
-        System.out.printf("Starting line: %s%n", startingLine);
-        Path url = Paths.get(getUrl(startingLine));
-        System.out.println(url);
-        Path appName = url.getParent();
-        System.out.println(appName);
+            System.out.printf("Socket %s accepted...%n", client);
 
-        byte[] content;
-        if (!appName.equals(Paths.get("/app/hello"))) {
-            content = "Not supported app!".getBytes();
-        } else {
-            Path targetName = url.getFileName();
-            Path target = configuration.getRoot().resolve(targetName);
+            Scanner input = new Scanner(client.getInputStream());
+            String startingLine = input.nextLine();
+            Path url = getUrl(startingLine);
+            Path appName = url.getParent();
 
-            System.out.printf("Try to send file %s%n", target);
+            byte[] content;
+            if (isHelloApp(appName)) {
+                Path targetName = url.getFileName();
+                Path target = configuration.getRoot().resolve(targetName);
 
-            try {
-                new FileAccessForReadingValidator(target.toFile()).validate();
+                System.out.printf("Try to send file %s%n", target);
 
-                FileInputStream fis = new FileInputStream(target.toFile());
-                content = fis.readAllBytes();
-            } catch (Exception e) {
-                content = "There isn't such file".getBytes();
+                try {
+                    new FileAccessForReadingValidator(target.toFile()).validate();
+
+                    FileInputStream fis = new FileInputStream(target.toFile());
+                    content = fis.readAllBytes();
+                    System.out.println("File was sent successfully");
+                } catch (Exception e) {
+                    content = "There isn't such file".getBytes();
+                    System.out.println("File was not sent");
+                }
+            } else {
+                content = "Not supported app!".getBytes();
+                System.out.println("Client had tried to ");
             }
-        }
-        String responce = "HTTP 200 OK\r\n" +
-                "Content-length: " + content.length + "\r\n" +
-                "Connection: close\r\n\r\n";
+            String responce = "HTTP 200 OK\r\n" +
+                    "Content-length: " + content.length + "\r\n" +
+                    "Connection: close\r\n\r\n";
 
-        try {
+
             OutputStream os = client.getOutputStream();
             os.write(responce.getBytes());
             os.write(content);
             os.flush();
             client.close();
+            System.out.println("Connection closed.");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Connection closed.");
     }
 
-    private String getUrl(String startingLine) {
+    private Path getUrl(String startingLine) throws IOException {
         Matcher matcher = REQUESTED_URL.matcher(startingLine);
         String result = null;
         if (matcher.find()) {
             result = startingLine.substring(matcher.start(), matcher.end());
         }
-        return result;
+        if (result == null) {
+            throw new IOException(String.format("Don't have url in %s.", startingLine));
+        }
+        return Paths.get(result);
+    }
+
+    private boolean isHelloApp(Path appName) {
+        return appName.equals(Paths.get("/app/hello"));
     }
 }
