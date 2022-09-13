@@ -9,7 +9,7 @@ public class FileIsFileValidator extends FileValidator{
     }
 
     @Override
-    public void validate() throws FileNotFoundException {
+    public void validate() {
         if (!getTarget().isFile()) {
             throw new IllegalArgumentException(String.format("%s doesn't lead to a file", getTarget()));
         }

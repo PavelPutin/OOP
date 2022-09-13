@@ -2,13 +2,15 @@ package Task1;
 
 import Task1.WebServer.FileServer;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class App {
     public static void main(String[] args) {
-        try (FileServer fs = new FileServer()) {
+        try {
+            FileServer fs = new FileServer();
             fs.start();
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
