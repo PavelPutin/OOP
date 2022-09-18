@@ -1,4 +1,4 @@
-package Task1.WebServer;
+package Task1.WebServer.socket_server;
 
 import Task1.Validators.FileValidators.FileAccessForReadingValidator;
 import Task1.WebServer.configuration.Configuration;
