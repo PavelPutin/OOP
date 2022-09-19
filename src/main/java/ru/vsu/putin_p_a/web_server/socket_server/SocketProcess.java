@@ -42,9 +42,7 @@ public class SocketProcess implements Runnable {
 
                 System.out.printf("Try to send file %s%n", targetName);
 
-                try {
-                    new FileAccessForReadingValidator(target.toFile()).validate();
-                    FileInputStream fis = new FileInputStream(target.toFile());
+                try (FileInputStream fis = new FileInputStream(target.toFile())) {
                     content = fis.readAllBytes();
                     fileWasRead = true;
                 } catch (Exception e) {

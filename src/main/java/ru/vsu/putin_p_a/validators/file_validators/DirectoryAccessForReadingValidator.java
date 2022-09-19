@@ -9,7 +9,7 @@ public class DirectoryAccessForReadingValidator extends FileValidator{
     }
 
     @Override
-    public void validate() throws FileNotFoundException {
+    public void validate() throws ValidationException {
         new FileIsDirectoryValidator(getTarget()).validate();
         new FileCanReadValidator(getTarget()).validate();
     }

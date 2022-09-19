@@ -2,6 +2,7 @@ package ru.vsu.putin_p_a.web_server.configuration;
 
 import ru.vsu.putin_p_a.validators.file_validators.DirectoryAccessForReadingValidator;
 import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
+import ru.vsu.putin_p_a.validators.file_validators.ValidationException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,7 +46,7 @@ public class Configuration {
         return appName;
     }
 
-    private Path parseRoot(String input) throws FileNotFoundException {
+    private Path parseRoot(String input) throws ValidationException {
         Path inputRoot = Paths.get(input);
         new DirectoryAccessForReadingValidator(inputRoot.toFile()).validate();
         return inputRoot;

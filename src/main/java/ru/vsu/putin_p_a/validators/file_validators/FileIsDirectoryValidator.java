@@ -9,7 +9,7 @@ public class FileIsDirectoryValidator extends FileValidator {
     }
 
     @Override
-    public void validate() throws FileNotFoundException {
+    public void validate() throws ValidationException {
         if (!getTarget().isDirectory()) {
             throw new IllegalArgumentException(String.format("%s doesn't lead to a directory", getTarget()));
         }

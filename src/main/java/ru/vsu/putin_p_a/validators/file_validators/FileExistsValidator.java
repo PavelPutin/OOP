@@ -9,9 +9,9 @@ public class FileExistsValidator extends FileValidator {
     }
 
     @Override
-    public void validate() throws FileNotFoundException {
+    public void validate() throws ValidationException {
         if (!getTarget().exists()) {
-            throw new FileNotFoundException(String.format("%s file not found", getTarget()));
+            throw new ValidationException(String.format("%s file not found", getTarget()));
         }
     }
 }

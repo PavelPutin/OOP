@@ -8,9 +8,9 @@ public class FileIsFileValidator extends FileValidator{
     }
 
     @Override
-    public void validate() {
+    public void validate() throws ValidationException {
         if (!getTarget().isFile()) {
-            throw new IllegalArgumentException(String.format("%s doesn't lead to a file", getTarget()));
+            throw new ValidationException(String.format("%s doesn't lead to a file", getTarget()));
         }
     }
 }

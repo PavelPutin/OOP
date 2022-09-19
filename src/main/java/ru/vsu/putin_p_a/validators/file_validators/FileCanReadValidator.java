@@ -9,7 +9,7 @@ public class FileCanReadValidator extends FileValidator {
     }
 
     @Override
-    public void validate() throws FileNotFoundException {
+    public void validate() throws ValidationException {
         if (!this.getTarget().canRead()) {
             throw new RuntimeException(String.format("%s file isn't readable", this.getTarget()));
         }
