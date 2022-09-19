@@ -1,3 +1,0 @@
-port: 3345
-root: C:\Users\pavel\OneDrive\Desktop\Учебные репозитории\OOP\app\web
-appname: \app\hello

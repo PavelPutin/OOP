@@ -5,34 +5,30 @@ import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class Configuration {
-    public final Path CONFIGURATION = Paths.get("C:\\Users\\pavel\\OneDrive\\Desktop\\Учебные репозитории\\OOP\\file_server_configuration.txt");
+    private Path configuration;
+    private Properties properties;
     private Integer port;
     private Path root;
     private String appName;
 
-    public Configuration() throws FileNotFoundException {
-        new FileAccessForReadingValidator(CONFIGURATION.toFile()).validate();
+    public Configuration() {
+        properties = new Properties();
+    }
 
-        Scanner scanner = new Scanner(new FileInputStream(CONFIGURATION.toFile()));
-        while (scanner.hasNextLine()) {
-            String rawInput = scanner.nextLine();
-            Parameter parameter = new Parameter(rawInput);
+    public void load(Path configuration) throws IOException {
+        new FileAccessForReadingValidator(configuration.toFile()).validate();
 
-            if (parameter.getName().equals("port")) {
-                port = parsePort(parameter.getValue());
-            }
-            if (parameter.getName().equals("root")) {
-                root = parseRoot(parameter.getValue());
-            }
-            if (parameter.getName().equals("appname")) {
-                appName = parseAppName(parameter.getValue());
-            }
-        }
+        properties.load(new FileInputStream(configuration.toFile()));
+        port = parsePort(properties.getProperty("port"));
+        root = parseRoot(properties.getProperty("root"));
+        appName = parseAppName(properties.getProperty("appname"));
     }
 
     public Integer getPort() {
