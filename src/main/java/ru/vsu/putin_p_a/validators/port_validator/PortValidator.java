@@ -12,6 +12,10 @@ public class PortValidator implements Validator {
 
     @Override
     public void validate() throws ValidationException {
-
+        try {
+            Integer.parseInt(target);
+        } catch (NumberFormatException e) {
+            throw new ValidationException(String.format("Port %s isn't valid", target));
+        }
     }
 }

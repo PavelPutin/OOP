@@ -3,20 +3,18 @@ package ru.vsu.putin_p_a.web_server.socket_server;
 import ru.vsu.putin_p_a.web_server.Server;
 import ru.vsu.putin_p_a.web_server.configuration.Configuration;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Paths;
 
 public class FileServer implements Server {
+    public final String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("").getPath();
     private final Configuration configuration;
 
     public FileServer() throws IOException {
         configuration = new Configuration();
-        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
         String configurationFileName = "file_server_configuration.properties";
-        String configPath = rootPath + configurationFileName;
+        String configPath = ROOT_PATH + configurationFileName;
         configuration.load(configPath);
     }
 

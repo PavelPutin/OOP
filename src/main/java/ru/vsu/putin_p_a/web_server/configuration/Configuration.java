@@ -3,6 +3,7 @@ package ru.vsu.putin_p_a.web_server.configuration;
 import ru.vsu.putin_p_a.validators.file_validators.DirectoryAccessForReadingValidator;
 import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
 import ru.vsu.putin_p_a.validators.file_validators.ValidationException;
+import ru.vsu.putin_p_a.validators.port_validator.PortValidator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +15,7 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class Configuration {
-    private Path configuration;
-    private Properties properties;
+    private final Properties properties;
     private Integer port;
     private Path root;
     private String appName;
@@ -52,7 +52,8 @@ public class Configuration {
         return inputRoot;
     }
 
-    private Integer parsePort(String input) {
+    private Integer parsePort(String input) throws ValidationException {
+        new PortValidator(input).validate();
         return Integer.valueOf(input);
     }
 
