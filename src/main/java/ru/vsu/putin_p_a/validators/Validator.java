@@ -1,6 +1,5 @@
-package Task1.Validators;
+package ru.vsu.putin_p_a.validators;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 public interface Validator {

@@ -1,7 +1,7 @@
-package Task1.WebServer.configuration;
+package ru.vsu.putin_p_a.web_server.configuration;
 
-import Task1.Validators.FileValidators.DirectoryAccessForReadingValidator;
-import Task1.Validators.FileValidators.FileAccessForReadingValidator;
+import ru.vsu.putin_p_a.validators.file_validators.DirectoryAccessForReadingValidator;
+import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class Configuration {
-    public final Path CONFIGURATION = Paths.get("C:\\Users\\Pavel\\Desktop\\Reepositories\\OOP\\file_server_configuration.txt");
+    public final Path CONFIGURATION = Paths.get("C:\\Users\\pavel\\OneDrive\\Desktop\\Учебные репозитории\\OOP\\file_server_configuration.txt");
     private Integer port;
     private Path root;
     private String appName;

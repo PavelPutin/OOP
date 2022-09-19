@@ -1,4 +1,4 @@
-package Task1.WebServer.configuration;
+package ru.vsu.putin_p_a.web_server.configuration;
 
 class Parameter {
     private final String DELIMITER = ":\\s*";

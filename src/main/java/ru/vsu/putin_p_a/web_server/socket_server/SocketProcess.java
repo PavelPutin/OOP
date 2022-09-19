@@ -1,7 +1,7 @@
-package Task1.WebServer.socket_server;
+package ru.vsu.putin_p_a.web_server.socket_server;
 
-import Task1.Validators.FileValidators.FileAccessForReadingValidator;
-import Task1.WebServer.configuration.Configuration;
+import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
+import ru.vsu.putin_p_a.web_server.configuration.Configuration;
 
 import java.io.FileInputStream;
 import java.io.IOException;

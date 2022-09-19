@@ -1,7 +1,7 @@
-package Task1;
+package ru.vsu.putin_p_a;
 
-import Task1.WebServer.Server;
-import Task1.WebServer.socket_server.FileServer;
+import ru.vsu.putin_p_a.web_server.Server;
+import ru.vsu.putin_p_a.web_server.socket_server.FileServer;
 
 import java.io.FileNotFoundException;
 

@@ -1,6 +1,6 @@
-package Task1.Validators.FileValidators;
+package ru.vsu.putin_p_a.validators.file_validators;
 
-import Task1.Validators.Validator;
+import ru.vsu.putin_p_a.validators.Validator;
 
 import java.io.File;
 

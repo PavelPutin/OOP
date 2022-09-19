@@ -1,4 +1,4 @@
-package Task1.Validators.FileValidators;
+package ru.vsu.putin_p_a.validators.file_validators;
 
 import java.io.File;
 
