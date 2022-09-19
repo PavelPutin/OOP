@@ -10,12 +10,14 @@ import java.net.Socket;
 import java.nio.file.Paths;
 
 public class FileServer implements Server {
-
     private final Configuration configuration;
 
     public FileServer() throws IOException {
         configuration = new Configuration();
-        configuration.load(Paths.get("C:\\Users\\pavel\\OneDrive\\Desktop\\Reepositories\\OOP\\file_server_configuration.properties"));
+        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        String configurationFileName = "file_server_configuration.properties";
+        String configPath = rootPath + configurationFileName;
+        configuration.load(configPath);
     }
 
     @Override

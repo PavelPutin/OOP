@@ -3,6 +3,7 @@ package ru.vsu.putin_p_a.web_server.configuration;
 import ru.vsu.putin_p_a.validators.file_validators.DirectoryAccessForReadingValidator;
 import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,10 +23,11 @@ public class Configuration {
         properties = new Properties();
     }
 
-    public void load(Path configuration) throws IOException {
-        new FileAccessForReadingValidator(configuration.toFile()).validate();
+    public void load(String configuration) throws IOException {
+        File source = new File(configuration);
+        new FileAccessForReadingValidator(source).validate();
 
-        properties.load(new FileInputStream(configuration.toFile()));
+        properties.load(new FileInputStream(source));
         port = parsePort(properties.getProperty("port"));
         root = parseRoot(properties.getProperty("root"));
         appName = parseAppName(properties.getProperty("appname"));
