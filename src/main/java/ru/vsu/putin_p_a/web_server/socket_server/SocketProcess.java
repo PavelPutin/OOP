@@ -1,6 +1,5 @@
 package ru.vsu.putin_p_a.web_server.socket_server;
 
-import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
 import ru.vsu.putin_p_a.web_server.configuration.Configuration;
 
 import java.io.FileInputStream;
@@ -9,12 +8,15 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SocketProcess implements Runnable {
     private final Pattern REQUESTED_URL = Pattern.compile("(?<=GET\\s).*(?=\\sHTTP/1.1)");
+    private final Map<Integer, String> codesResponseStatus;
 
     private final Socket client;
     private final Configuration configuration;
@@ -22,6 +24,9 @@ public class SocketProcess implements Runnable {
     public SocketProcess(Socket client, Configuration configuration) {
         this.client = client;
         this.configuration = configuration;
+        codesResponseStatus = new HashMap<>();
+        codesResponseStatus.put(200, "OK");
+        codesResponseStatus.put(404, "Bad Request");
     }
 
     @Override
@@ -53,24 +58,30 @@ public class SocketProcess implements Runnable {
                 System.out.println("Client requested to unexcited app");
             }
 
-            sendResponce(content);
             if (fileWasRead) {
+                sendResponce(content, 200);
                 System.out.println("File was sent successfully");
             } else {
+                sendResponce(content, 404);
                 System.out.println("File was not sent");
             }
-
-            client.close();
-            System.out.println("Connection closed.");
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                client.close();
+                System.out.println("Connection closed.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void sendResponce(byte[] content) throws IOException {
-        String responce = "HTTP 200 OK\r\n" +
+    private void sendResponce(byte[] content, int code) throws IOException {
+        String responce = "HTTP " + code + " " + codesResponseStatus.get(code) + "\r\n" +
                 "Content-length: " + content.length + "\r\n" +
                 "Connection: close\r\n\r\n";
+        System.out.println(responce);
 
         OutputStream os = client.getOutputStream();
         os.write(responce.getBytes());
