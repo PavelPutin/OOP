@@ -7,12 +7,10 @@ import ru.vsu.putin_p_a.validators.port_validator.PortValidator;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.Scanner;
 
 public class Configuration {
     private final Properties properties;
