@@ -65,7 +65,7 @@ public class SocketProcess implements Runnable {
                 sendResponce(content, 404);
                 System.out.println("File was not sent");
             }
-        } catch (IOException e) {
+        } catch (IOException | NoSuchElementException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -102,6 +102,7 @@ public class SocketProcess implements Runnable {
     }
 
     private boolean isHelloApp(Path appName) {
-        return appName.equals(Paths.get(configuration.getAppName()));
+        
+        return appName != null && appName.equals(Paths.get(configuration.getAppName()));
     }
 }
