@@ -41,6 +41,7 @@ public class SocketProcess implements Runnable {
 
             byte[] content;
             boolean fileWasRead = false;
+            boolean supportedApp = true;
             if (isHelloApp(appName)) {
                 Path targetName = url.getFileName();
                 Path target = configuration.getRoot().resolve(targetName);
@@ -54,11 +55,12 @@ public class SocketProcess implements Runnable {
                     content = "There isn't such file".getBytes();
                 }
             } else {
+                supportedApp = false;
                 content = "Not supported app!".getBytes();
                 System.out.println("Client requested to unexcited app");
             }
 
-            if (fileWasRead) {
+            if (fileWasRead && supportedApp) {
                 sendResponce(content, 200);
                 System.out.println("File was sent successfully");
             } else {
