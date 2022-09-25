@@ -26,7 +26,7 @@ public class SocketProcess implements Runnable {
         this.configuration = configuration;
         codesResponseStatus = new HashMap<>();
         codesResponseStatus.put(200, "OK");
-        codesResponseStatus.put(404, "Bad Request");
+        codesResponseStatus.put(404, "Not Found");
     }
 
     @Override
@@ -78,10 +78,9 @@ public class SocketProcess implements Runnable {
     }
 
     private void sendResponce(byte[] content, int code) throws IOException {
-        String responce = "HTTP " + code + " " + codesResponseStatus.get(code) + "\r\n" +
+        String responce = "HTTP/1.1 " + code + " " + codesResponseStatus.get(code) + "\r\n" +
                 "Content-length: " + content.length + "\r\n" +
                 "Connection: close\r\n\r\n";
-        System.out.println(responce);
 
         OutputStream os = client.getOutputStream();
         os.write(responce.getBytes());
