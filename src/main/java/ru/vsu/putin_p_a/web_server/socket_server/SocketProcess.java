@@ -68,12 +68,14 @@ public class SocketProcess implements Runnable {
                 System.out.println("File was not sent");
             }
         } catch (IOException e) {
+            System.out.println("Something went wrong with client socket input stream");
             e.printStackTrace();
         } finally {
             try {
                 client.close();
                 System.out.println("Connection closed.");
             } catch (IOException e) {
+                System.out.println("Can't close client socket");
                 e.printStackTrace();
             }
         }
