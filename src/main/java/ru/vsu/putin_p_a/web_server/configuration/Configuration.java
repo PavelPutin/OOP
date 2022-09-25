@@ -18,6 +18,8 @@ public class Configuration {
     private Path root;
     private String appName;
 
+    private String servletsPackage;
+
     public Configuration() {
         properties = new Properties();
     }
@@ -30,6 +32,7 @@ public class Configuration {
         port = parsePort(properties.getProperty("port"));
         root = parseRoot(properties.getProperty("root"));
         appName = parseAppName(properties.getProperty("appname"));
+        servletsPackage = parseServletsPackage(properties.getProperty("servlets-package"));
     }
 
     public Integer getPort() {
@@ -42,6 +45,10 @@ public class Configuration {
 
     public String getAppName() {
         return appName;
+    }
+
+    public String getServletsPackage() {
+        return servletsPackage;
     }
 
     private Path parseRoot(String input) throws ValidationException {
@@ -57,5 +64,9 @@ public class Configuration {
 
     private String parseAppName(String value) {
         return value;
+    }
+
+    private String parseServletsPackage(String property) {
+        return property;
     }
 }

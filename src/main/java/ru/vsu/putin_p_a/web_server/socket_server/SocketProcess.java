@@ -1,6 +1,7 @@
 package ru.vsu.putin_p_a.web_server.socket_server;
 
 import ru.vsu.putin_p_a.web_server.configuration.Configuration;
+import ru.vsu.putin_p_a.web_server.http_protocol.ResponseStatus;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,25 +9,18 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SocketProcess implements Runnable {
     private final Pattern REQUESTED_URL = Pattern.compile("(?<=GET\\s).*(?=\\sHTTP/1.1)");
-    private final Map<Integer, String> codesResponseStatus;
-
     private final Socket client;
     private final Configuration configuration;
 
     public SocketProcess(Socket client, Configuration configuration) {
         this.client = client;
         this.configuration = configuration;
-        codesResponseStatus = new HashMap<>();
-        codesResponseStatus.put(200, "OK");
-        codesResponseStatus.put(404, "Not Found");
     }
 
     @Override
@@ -61,10 +55,10 @@ public class SocketProcess implements Runnable {
             }
 
             if (fileWasRead && supportedApp) {
-                sendResponce(content, 200);
+                sendResponse(content, ResponseStatus.OK);
                 System.out.println("File was sent successfully");
             } else {
-                sendResponce(content, 404);
+                sendResponse(content, ResponseStatus.NOT_FOUND);
                 System.out.println("File was not sent");
             }
         } catch (IOException e) {
@@ -81,13 +75,13 @@ public class SocketProcess implements Runnable {
         }
     }
 
-    private void sendResponce(byte[] content, int code) throws IOException {
-        String responce = "HTTP/1.1 " + code + " " + codesResponseStatus.get(code) + "\r\n" +
+    private void sendResponse(byte[] content, ResponseStatus status) throws IOException {
+        String response = "HTTP/1.1 " + status.getCode() + " " + status.getStatus() + "\r\n" +
                 "Content-length: " + content.length + "\r\n" +
                 "Connection: close\r\n\r\n";
 
         OutputStream os = client.getOutputStream();
-        os.write(responce.getBytes());
+        os.write(response.getBytes());
         os.write(content);
         os.flush();
     }
