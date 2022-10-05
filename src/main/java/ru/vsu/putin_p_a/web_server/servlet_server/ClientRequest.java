@@ -4,7 +4,7 @@ import ru.vsu.putin_p_a.App;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpError;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpRequest;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpResponse;
-import ru.vsu.putin_p_a.parser.ByteToStringParser;
+import ru.vsu.putin_p_a.parser.RequestParser;
 import ru.vsu.putin_p_a.web_server.http_protocol.ResponseStatus;
 import ru.vsu.putin_p_a.web_server.servlet_server.mapper.ServletMapException;
 import ru.vsu.putin_p_a.web_server.servlet_server.servlets.Servlet;
@@ -13,7 +13,7 @@ import ru.vsu.putin_p_a.web_server.servlet_server.servlets.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
+import java.text.ParseException;
 
 public class ClientRequest implements Runnable {
 
@@ -27,18 +27,16 @@ public class ClientRequest implements Runnable {
 
     @Override
     public void run() {
+        App.LOGGING.println("Начата обработка клиентского запроса");
         try {
-            App.LOGGING.println("Начата обработка клиентского запроса");
-            ByteToStringParser parser = new ByteToStringParser(client.getInputStream());
+            RequestParser parser = new RequestParser(client.getInputStream());
             String content = parser.parse();
 
-            System.out.println(content);
-
             HttpRequest req = new HttpRequest(content);
+            HttpResponse resp = new HttpResponse();
+
             Servlet mapped = server.getServletMapper().getServlet(req.getUri());
             mapped.init();
-            App.LOGGING.println("Сервлета проинициализирована");
-            HttpResponse resp = new HttpResponse();
 
             if (req.getMethod().equals("GET")) {
                 App.LOGGING.println("Начата обработка GET запроса");
@@ -50,8 +48,7 @@ public class ClientRequest implements Runnable {
             App.LOGGING.println("Response was sent");
             mapped.destroy();
         } catch (IOException e) {
-            App.LOGGING.println("There was a problem with data input/output");
-            e.printStackTrace();
+            processIOException(e);
         } catch (ServletMapException e) {
             App.LOGGING.println("Can't get servlet");
             e.printStackTrace();
@@ -59,7 +56,9 @@ public class ClientRequest implements Runnable {
             App.LOGGING.println("Servlets initialization error");
             e.printStackTrace();
         } catch (HttpError e) {
-            throw new RuntimeException(e);
+            App.LOGGING.println(e.getMessage());
+        } catch (ParseException e) {
+            App.LOGGING.println(e.getMessage());
         } finally {
             try {
                 client.close();
@@ -67,5 +66,18 @@ public class ClientRequest implements Runnable {
                 App.LOGGING.println("Can't close the connection");
             }
         }
+    }
+
+    private static void processIOException(IOException e) {
+        App.LOGGING.println("There was a problem with data input/output");
+        e.printStackTrace();
+    }
+
+    private void sendNotFoundResponse(String message) throws IOException, HttpError {
+        HttpResponse resp = new HttpResponse();
+        resp.setStatus(ResponseStatus.NOT_FOUND);
+        PrintWriter pw = new PrintWriter(resp.getOutputStream());
+        pw.println(message);
+        resp.send(client.getOutputStream());
     }
 }
