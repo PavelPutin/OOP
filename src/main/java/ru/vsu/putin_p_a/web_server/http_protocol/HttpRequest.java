@@ -1,29 +1,87 @@
 package ru.vsu.putin_p_a.web_server.http_protocol;
 
-import java.net.http.HttpHeaders;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HttpRequest {
+    private final String text;
     private final String method;
     private final String uri;
     private final Map<String, String> parameters;
-
-    public HttpRequest(String method, String uri) {
-        this.method = method;
-        this.uri = uri;
-        this.parameters = new HashMap<>();
+    public HttpRequest(String text) throws HttpError {
+        this.text = text;
+        method = parseMethod();
+        uri = parseUri();
+        parameters = parseParameters();
     }
 
-    public String getMethod() {
-        return method;
+    public String getText() {
+        return text;
     }
 
     public String getUri() {
         return uri;
     }
 
-    public String getParameter(String parameter) {
-        return parameters.get(parameter);
+    public String getMethod() {
+        return method;
+    }
+
+    public String getParameter(String name) {
+        return parameters.get(name);
+    }
+
+    private String parseMethod() throws HttpError {
+        try {
+            String parsed = new Scanner(text).next();
+            boolean unavailable = true;
+            for (Methods m : Methods.values()) {
+                if (parsed.equals(m.toString())) {
+                    unavailable = false;
+                    break;
+                }
+            }
+            if (unavailable) {
+                throw new HttpError("Unavailable method");
+            }
+            return parsed;
+        } catch (NoSuchElementException e) {
+            throw new HttpError("Request doesn't have method");
+        }
+    }
+
+    private String parseUri() throws HttpError {
+        try {
+            Scanner s = new Scanner(text);
+            s.useDelimiter("\s|\\?");
+            String parsed = "";
+            for (int i = 0; i < 2; i++) {
+                parsed = s.next();
+            }
+
+            return parsed;
+        } catch (NoSuchElementException e) {
+            throw new HttpError("Request doesn't have method");
+        }
+    }
+
+    private Map<String, String> parseParameters() throws HttpError {
+        try {
+            Map<String, String> parsed = new HashMap<>();
+            String startLine = new Scanner(text).nextLine();
+            Matcher matcher = Pattern.compile("(?<=[?&])\\w+=\\w+").matcher(startLine);
+            while (matcher.find()) {
+                String parameter = matcher.group();
+                String[] split = parameter.split("=");
+                parsed.put(split[0], split[1]);
+            }
+            return parsed;
+        } catch (NoSuchElementException e) {
+            throw new HttpError("Request doesn't have method");
+        }
     }
 }
