@@ -20,14 +20,14 @@ public class FileServer implements Server {
     @Override
     public void start() {
         try (ServerSocket server = new ServerSocket(configuration.getPort())) {
-            System.out.printf("Server started at port %d...%n", configuration.getPort());
+            App.LOGGING.printf("Server started at port %d...%n", configuration.getPort());
             while (true) {
                 Socket client = server.accept();
                 /*@Thanks FelixDes*/
                 new Thread(new SocketProcess(client, configuration)).start();
             }
         } catch (IOException e) {
-            System.out.println("Can't start server");
+            App.LOGGING.println("Can't start server");
             e.printStackTrace();
         }
     }

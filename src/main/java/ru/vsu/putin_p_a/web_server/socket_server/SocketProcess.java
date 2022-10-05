@@ -78,7 +78,7 @@ public class SocketProcess implements Runnable {
     private void sendResponse(byte[] content, ResponseStatus status) throws IOException {
         String response = "HTTP/1.1 " + status.getCode() + " " + status.getStatus() + "\r\n" +
                 "Content-length: " + content.length + "\r\n" +
-                "Connection: close\r\n\r\n";
+                "Connection: close\r\n\r\nHello";
 
         OutputStream os = client.getOutputStream();
         os.write(response.getBytes());

@@ -1,4 +1,4 @@
-package ru.vsu.putin_p_a.web_server.servlet_server;
+package ru.vsu.putin_p_a.web_server.servlet_server.servlets;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

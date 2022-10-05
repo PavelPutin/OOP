@@ -1,4 +1,4 @@
-package ru.vsu.putin_p_a.validators.port_validator;
+package ru.vsu.putin_p_a.validators.parameter_validators;
 
 import ru.vsu.putin_p_a.validators.Validator;
 import ru.vsu.putin_p_a.validators.file_validators.ValidationException;
