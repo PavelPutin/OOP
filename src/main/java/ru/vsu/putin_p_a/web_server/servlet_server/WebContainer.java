@@ -10,14 +10,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class WebContainer implements Server {
-    private final Configuration configuration;
-    private final ServletMapper servletMapper;
+    public static final Configuration configuration;
+    public static final ServletMapper servletMapper;
 
-    public WebContainer() throws IOException {
-        this.configuration = new Configuration();
-        this.configuration.load(App.CONFIGURATION);
-        this.servletMapper = new ServletMapper();
-        this.servletMapper.mapServlet(configuration.getServletsPackage());
+    static {
+        configuration = new Configuration();
+        try {
+            configuration.load(App.CONFIGURATION);
+        } catch (IOException e) {
+            App.LOGGING.println(e.getMessage());
+        }
+        servletMapper = new ServletMapper();
+        servletMapper.mapServlet(configuration.getServletsPackage());
     }
 
     public Configuration getConfiguration() {
@@ -35,7 +39,7 @@ public class WebContainer implements Server {
             while (true) {
                 Socket client = server.accept();
                 App.LOGGING.printf("Accepted socket %s%n", client.getInetAddress());
-                new Thread(new ClientRequest(client, this)).start();
+                new Thread(new ClientRequest(client)).start();
             }
         } catch (IOException e) {
             App.LOGGING.println("Can't start server");
