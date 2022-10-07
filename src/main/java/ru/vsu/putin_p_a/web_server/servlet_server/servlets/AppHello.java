@@ -2,16 +2,16 @@ package ru.vsu.putin_p_a.web_server.servlet_server.servlets;
 
 import ru.vsu.putin_p_a.App;
 import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
-import ru.vsu.putin_p_a.validators.file_validators.ValidationException;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpRequest;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpResponse;
 import ru.vsu.putin_p_a.web_server.http_protocol.ResponseStatus;
 import ru.vsu.putin_p_a.web_server.servlet_server.WebContainer;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
 
 @WebServlet("/app/hello")
 public class AppHello implements Servlet {
