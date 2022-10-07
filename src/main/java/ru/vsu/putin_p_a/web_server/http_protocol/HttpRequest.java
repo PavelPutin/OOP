@@ -12,11 +12,16 @@ public class HttpRequest {
     private final String method;
     private final String uri;
     private final Map<String, String> parameters;
+
     public HttpRequest(String text) throws HttpError {
         this.text = text;
         method = parseMethod();
         uri = parseUri();
         parameters = parseParameters();
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
     public String getText() {
@@ -73,7 +78,7 @@ public class HttpRequest {
         try {
             Map<String, String> parsed = new HashMap<>();
             String startLine = new Scanner(text).nextLine();
-            Matcher matcher = Pattern.compile("(?<=[?&])\\w+=\\w+").matcher(startLine);
+            Matcher matcher = Pattern.compile("(?<=[?&])\\w+=[^&\s]+").matcher(startLine);
             while (matcher.find()) {
                 String parameter = matcher.group();
                 String[] split = parameter.split("=");

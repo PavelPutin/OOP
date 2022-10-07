@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 
 public class DefaultNotFound implements Servlet {
     @Override
-    public void init() throws ServletException {
+    public void init() {
         App.LOGGING.println("Было обращение к несуществующей сервлете");
     }
 

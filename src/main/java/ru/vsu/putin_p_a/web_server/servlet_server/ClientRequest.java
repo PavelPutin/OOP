@@ -6,7 +6,6 @@ import ru.vsu.putin_p_a.web_server.http_protocol.HttpRequest;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpResponse;
 import ru.vsu.putin_p_a.parser.RequestParser;
 import ru.vsu.putin_p_a.web_server.servlet_server.servlets.Servlet;
-import ru.vsu.putin_p_a.web_server.servlet_server.servlets.ServletException;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -47,11 +46,11 @@ public class ClientRequest implements Runnable {
             mapped.destroy();
         } catch (IOException e) {
             processIOException(e);
-        } catch (ServletException e) {
-            App.LOGGING.println("Servlets initialization error");
-            e.printStackTrace();
         } catch (HttpError | ParseException e) {
             App.LOGGING.println(e.getMessage());
+
+
+
         } finally {
             try {
                 client.close();
