@@ -7,27 +7,29 @@ import ru.vsu.putin_p_a.web_server.http_protocol.ResponseStatus;
 
 import java.io.PrintWriter;
 
-@WebServlet("/app/hello")
-public class AppHello implements Servlet {
+public class DefaultNotFound implements Servlet {
     @Override
     public void init() throws ServletException {
-        App.LOGGING.println("Сервлета /app/hello проинициализирована");
+        App.LOGGING.println("Было обращение к несуществующей сервлете");
+    }
+
+    @Override
+    public void destroy() {
+        Servlet.super.destroy();
     }
 
     @Override
     public void doGet(HttpRequest req, HttpResponse resp) {
+        resp.setStatus(ResponseStatus.NOT_FOUND);
         PrintWriter pw = new PrintWriter(resp.getOutputStream());
-        pw.println("Hello, servlet!");
-        resp.setStatus(ResponseStatus.OK);
+        pw.printf("""
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page not found</title>
+</head>
+<body><h1>Error 404: Page %s not found</h1></body>
+</html>""", req.getUri());
         pw.close();
     }
-//    /app/hello/file?name=source.txt
-//    @Get("file")
-//    public int add(@Param("name") String name) {
-//        return 0;
-//    }
-//
-//    public int multiply(int a, int b) {
-//        return 0;
-//    }
 }

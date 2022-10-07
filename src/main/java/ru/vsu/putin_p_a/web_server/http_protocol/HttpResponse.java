@@ -8,7 +8,6 @@ public class HttpResponse {
     public static final String LINE_BREAKER = "\r\n";
     private final ByteArrayOutputStream content = new ByteArrayOutputStream();
     private ResponseStatus status;
-    private byte[] response;
 
     public ResponseStatus getStatus() {
         return status;

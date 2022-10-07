@@ -1,7 +1,7 @@
 package ru.vsu.putin_p_a.web_server.servlet_server.mapper;
 
 import org.reflections.Reflections;
-import ru.vsu.putin_p_a.App;
+import ru.vsu.putin_p_a.web_server.servlet_server.servlets.DefaultNotFound;
 import ru.vsu.putin_p_a.web_server.servlet_server.servlets.Servlet;
 import ru.vsu.putin_p_a.web_server.servlet_server.servlets.WebServlet;
 
@@ -13,6 +13,22 @@ import java.util.Set;
 public class ServletMapper {
 
     private final Map<String, Class<?>> servletMap = new HashMap<>();
+    private Servlet notFound = new DefaultNotFound();
+
+    private static boolean isServlet(Class<?> c) {
+        boolean isServlet = false;
+        for (AnnotatedType annotatedInterface : c.getAnnotatedInterfaces()) {
+            if (annotatedInterface.getType() == Servlet.class) {
+                isServlet = true;
+                break;
+            }
+        }
+        return isServlet;
+    }
+
+    public void setNotFound(Servlet notFound) {
+        this.notFound = notFound;
+    }
 
     public void mapServlet(String servletsPackage) {
         Reflections reflections = new Reflections(servletsPackage);
@@ -25,22 +41,11 @@ public class ServletMapper {
         }
     }
 
-    public Servlet getServlet(String path) throws ServletMapException {
+    public Servlet getServletOrNotFound(String path) {
         try {
             return (Servlet) servletMap.get(path).getConstructors()[0].newInstance();
         } catch (Exception e) {
-            throw new ServletMapException("Can't create servlet");
+            return notFound;
         }
-    }
-
-    private static boolean isServlet(Class<?> c) {
-        boolean isServlet = false;
-        for (AnnotatedType annotatedInterface : c.getAnnotatedInterfaces()) {
-            if (annotatedInterface.getType() == Servlet.class) {
-                isServlet = true;
-                break;
-            }
-        }
-        return isServlet;
     }
 }
