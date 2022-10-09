@@ -7,18 +7,17 @@ import ru.vsu.putin_p_a.web_server.http_protocol.ResponseStatus;
 
 import java.io.PrintWriter;
 
-public class DefaultNotFound implements Servlet {
+public class DefaultNotFound extends Servlet {
+    public DefaultNotFound(HttpRequest req, HttpResponse resp) {
+        super(req, resp);
+    }
+
     @Override
     public void init() {
         App.LOGGING.println("Было обращение к несуществующей сервлете");
     }
 
-    @Override
-    public void destroy() {
-        Servlet.super.destroy();
-    }
-
-    @Override
+    @Get("")
     public void doGet(HttpRequest req, HttpResponse resp) {
         resp.setStatus(ResponseStatus.NOT_FOUND);
         PrintWriter pw = new PrintWriter(resp.getOutputStream());

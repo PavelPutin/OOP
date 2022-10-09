@@ -8,6 +8,8 @@ import ru.vsu.putin_p_a.web_server.http_protocol.HttpResponse;
 import ru.vsu.putin_p_a.web_server.servlet_server.servlets.Servlet;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.text.ParseException;
 
@@ -30,11 +32,12 @@ public class ClientRequest implements Runnable {
             HttpResponse resp = new HttpResponse();
 
             Servlet mapped = WebContainer.servletMapper.getServletOrNotFound(req.getUri());
+            Method subApplication = WebContainer.servletMapper.getSubApplication(req.getUri());
             mapped.init();
 
             if (req.getMethod().equals("GET")) {
                 App.LOGGING.println("Начата обработка GET запроса");
-                mapped.doGet(req, resp);
+                mapped.doGet(req, resp, subApplication);
                 App.LOGGING.println("Обработка GET запроса завершена");
             }
 
@@ -44,11 +47,9 @@ public class ClientRequest implements Runnable {
             mapped.destroy();
         } catch (IOException e) {
             processIOException(e);
-        } catch (HttpError | ParseException e) {
+        } catch (HttpError | ParseException | NoSuchMethodException | InvocationTargetException |
+                 InstantiationException | IllegalAccessException e) {
             App.LOGGING.println(e.getMessage());
-
-
-
         } finally {
             try {
                 client.close();

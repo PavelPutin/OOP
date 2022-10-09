@@ -3,24 +3,21 @@ package ru.vsu.putin_p_a.web_server.servlet_server;
 import ru.vsu.putin_p_a.App;
 import ru.vsu.putin_p_a.web_server.Server;
 import ru.vsu.putin_p_a.web_server.configuration.Configuration;
+import ru.vsu.putin_p_a.web_server.servlet_server.mapper.ServletMapException;
 import ru.vsu.putin_p_a.web_server.servlet_server.mapper.ServletMapper;
+import ru.vsu.putin_p_a.web_server.servlet_server.servlets.DefaultNotFound;
+import ru.vsu.putin_p_a.web_server.servlet_server.servlets.Servlet;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class WebContainer implements Server {
-    public static final Configuration configuration;
-    public static final ServletMapper servletMapper;
+    public static final Configuration configuration = new Configuration();;
+    public static final ServletMapper servletMapper = new ServletMapper();;
 
-    static {
-        configuration = new Configuration();
-        try {
-            configuration.load(App.CONFIGURATION);
-        } catch (IOException e) {
-            App.LOGGING.println(e.getMessage());
-        }
-        servletMapper = new ServletMapper();
+    public WebContainer() throws IOException, ServletMapException {
+        configuration.load(Configuration.SOURCE);
         servletMapper.mapServlet(configuration.getServletsPackage());
     }
 

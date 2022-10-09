@@ -1,5 +1,6 @@
 package ru.vsu.putin_p_a.web_server.configuration;
 
+import ru.vsu.putin_p_a.App;
 import ru.vsu.putin_p_a.validators.file_validators.DirectoryAccessForReadingValidator;
 import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
 import ru.vsu.putin_p_a.validators.file_validators.ValidationException;
@@ -14,6 +15,8 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 public class Configuration {
+    public static final String ROOT = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+    public static final String SOURCE = ROOT + "file_server_configuration.properties";
     private Integer port;
     private Path root;
     private String appName;
@@ -27,9 +30,12 @@ public class Configuration {
         Properties properties = new Properties();
         properties.load(new FileInputStream(source));
         port = parsePort(properties.getProperty("port"));
+        App.LOGGING.println(port);
         root = parseRoot(properties.getProperty("root"));
+        App.LOGGING.println(root);
         appName = parseAppName(properties.getProperty("appname"));
         servletsPackage = parseServletsPackage(properties.getProperty("servlets-package"));
+        App.LOGGING.println(servletsPackage);
     }
 
     public Integer getPort() {

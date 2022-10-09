@@ -4,6 +4,7 @@ import ru.vsu.putin_p_a.App;
 import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpRequest;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpResponse;
+import ru.vsu.putin_p_a.web_server.http_protocol.Methods;
 import ru.vsu.putin_p_a.web_server.http_protocol.ResponseStatus;
 import ru.vsu.putin_p_a.web_server.servlet_server.WebContainer;
 
@@ -11,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 
 @WebServlet("/app/hello")
@@ -21,7 +23,7 @@ public class AppHello implements Servlet {
     }
 
     @Override
-    public void doGet(HttpRequest req, HttpResponse resp) {
+    public void doGet(HttpRequest req, HttpResponse resp, Method subApplication) {
         String fileName = req.getParameter("file");
         if (fileName == null) {
             resp.setStatus(ResponseStatus.NOT_FOUND);
@@ -60,6 +62,7 @@ public class AppHello implements Servlet {
             }
         }
     }
+
 //    /app/hello/file?name=source.txt
 //    @Get("file")
 //    public int add(@Param("name") String name) {
