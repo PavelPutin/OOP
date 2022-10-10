@@ -5,28 +5,19 @@ import ru.vsu.putin_p_a.web_server.Server;
 import ru.vsu.putin_p_a.web_server.configuration.Configuration;
 import ru.vsu.putin_p_a.web_server.servlet_server.mapper.ServletMapException;
 import ru.vsu.putin_p_a.web_server.servlet_server.mapper.ServletMapper;
-import ru.vsu.putin_p_a.web_server.servlet_server.servlets.DefaultNotFound;
-import ru.vsu.putin_p_a.web_server.servlet_server.servlets.Servlet;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class WebContainer implements Server {
-    public static final Configuration configuration = new Configuration();;
+    public static final String SOURCE = Configuration.ROOT + "file_server_configuration.properties";
+    public static final ContainerConfiguration configuration = new ContainerConfiguration();
     public static final ServletMapper servletMapper = new ServletMapper();;
 
     public WebContainer() throws IOException, ServletMapException {
-        configuration.load(Configuration.SOURCE);
+        configuration.load(SOURCE);
         servletMapper.mapServlet(configuration.getServletsPackage());
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public ServletMapper getServletMapper() {
-        return servletMapper;
     }
 
     @Override
