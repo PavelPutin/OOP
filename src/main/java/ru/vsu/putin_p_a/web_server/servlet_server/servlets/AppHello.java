@@ -2,6 +2,7 @@ package ru.vsu.putin_p_a.web_server.servlet_server.servlets;
 
 import ru.vsu.putin_p_a.App;
 import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
+import ru.vsu.putin_p_a.web_server.configuration.Configuration;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpRequest;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpResponse;
 import ru.vsu.putin_p_a.web_server.http_protocol.Methods;
@@ -17,9 +18,15 @@ import java.nio.file.Path;
 
 @WebServlet("/app/hello")
 public class AppHello implements Servlet {
+    private final AppHelloConfiguration configuration = new AppHelloConfiguration();
     @Override
     public void init() {
         App.LOGGING.println("Сервлета /app/hello проинициализирована");
+        try {
+            configuration.load(Configuration.ROOT);
+        } catch (IOException e) {
+            throw new RuntimeException("Can't get AppHello configuration");
+        }
     }
 
     @Override
@@ -37,7 +44,7 @@ public class AppHello implements Servlet {
                         </html>""");
             pw.close();
         } else {
-            Path fullPath = WebContainer.configuration.getRoot().resolve(fileName);
+            Path fullPath = configuration.getRoot().resolve(fileName);
             App.LOGGING.println(fullPath);
             try {
                 new FileAccessForReadingValidator(fullPath.toFile()).validate();
@@ -61,6 +68,11 @@ public class AppHello implements Servlet {
                 pw.close();
             }
         }
+    }
+
+    @Get("file")
+    public byte[] sendFile(@Param("file") String file) {
+        return new byte[4];
     }
 
 //    /app/hello/file?name=source.txt

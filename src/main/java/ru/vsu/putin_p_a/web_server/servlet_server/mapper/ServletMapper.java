@@ -3,11 +3,9 @@ package ru.vsu.putin_p_a.web_server.servlet_server.mapper;
 import org.reflections.Reflections;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpRequest;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpResponse;
-import ru.vsu.putin_p_a.web_server.servlet_server.servlets.DefaultNotFound;
-import ru.vsu.putin_p_a.web_server.servlet_server.servlets.Get;
-import ru.vsu.putin_p_a.web_server.servlet_server.servlets.Servlet;
-import ru.vsu.putin_p_a.web_server.servlet_server.servlets.WebServlet;
+import ru.vsu.putin_p_a.web_server.servlet_server.servlets.*;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -51,6 +49,15 @@ public class ServletMapper {
 
                 for (Method m : subApplication) {
                     String subPath = m.getAnnotation(Get.class).value();
+                    List<String> paramsNames = new ArrayList<>();
+                    Annotation[][] annotations = m.getParameterAnnotations();
+                    for (Annotation[] param : annotations) {
+                        for (Annotation annotation : param) {
+                            if (annotation.annotationType().equals(Param.class)) {
+                                paramsNames.add(((Param) annotation).value());
+                            }
+                        }
+                    }
                     String fullPath = annotatedPath + "/" + subPath;
                     if (servletMap.containsKey(fullPath)) {
                         throw new ServletMapException(String.format("Servlet %s already exists.", fullPath));
