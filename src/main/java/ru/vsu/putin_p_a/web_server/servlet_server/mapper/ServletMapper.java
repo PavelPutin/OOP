@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class ServletMapper {
-
     private final Map<String, MappedApplication> servletMap = new HashMap<>();
     private Class<Servlet> notFound;
 
@@ -70,19 +69,18 @@ public class ServletMapper {
     }
 
     public Servlet getServletOrNotFound(String path) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-        try {
-            return (Servlet) servletMap.get(path).mainApplication().getConstructor().newInstance();
-        } catch (Exception e) {
-            return notFound.getConstructor().newInstance();
+        Class<Servlet> result = notFound;
+        if (servletMap.containsKey(path)) {
+            result = (Class<Servlet>) servletMap.get(path).mainApplication();
         }
+        return result.getConstructor().newInstance();
     }
 
     public Method getSubApplication(String path) throws NoSuchMethodException {
-        try {
-            return servletMap.get(path).subApplication();
-        } catch (Exception e) {
-            return notFound.getMethod("doGet");
+        Method subApplication = notFound.getMethod("doGet");
+        if (servletMap.containsKey(path)) {
+            subApplication = servletMap.get(path).subApplication();
         }
-
+        return subApplication;
     }
 }

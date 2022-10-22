@@ -13,7 +13,7 @@ import java.net.Socket;
 public class WebContainer implements Server {
     public static final String SOURCE = Configuration.ROOT + "file_server_configuration.properties";
     public static final ContainerConfiguration configuration = new ContainerConfiguration();;
-    public static final ServletMapper servletMapper = new ServletMapper();;
+    public static final ServletMapper servletMapper = new ServletMapper();
 
     public WebContainer() throws IOException, ServletMapException {
         configuration.load(SOURCE);
