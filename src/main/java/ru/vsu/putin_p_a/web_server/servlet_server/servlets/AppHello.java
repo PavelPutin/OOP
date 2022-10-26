@@ -5,9 +5,7 @@ import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator
 import ru.vsu.putin_p_a.web_server.configuration.Configuration;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpRequest;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpResponse;
-import ru.vsu.putin_p_a.web_server.http_protocol.Methods;
 import ru.vsu.putin_p_a.web_server.http_protocol.ResponseStatus;
-import ru.vsu.putin_p_a.web_server.servlet_server.WebContainer;
 
 import java.io.FileInputStream;
 import java.io.IOException;

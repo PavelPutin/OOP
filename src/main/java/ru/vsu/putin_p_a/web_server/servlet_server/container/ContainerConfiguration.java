@@ -1,4 +1,4 @@
-package ru.vsu.putin_p_a.web_server.servlet_server;
+package ru.vsu.putin_p_a.web_server.servlet_server.container;
 
 import ru.vsu.putin_p_a.validators.file_validators.DirectoryAccessForReadingValidator;
 import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
@@ -14,6 +14,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+/**
+ * Цель: получить из файла конфигурации данные и привести их к виду, который нужен серверу
+ * TODO: нарушает open/closed (low coupling) - этот класс знает семантику сервера
+ * TODO: нарушает single responsibility - не только получает данные из файла, но и приводит их к некоторому виду, **предполагается** мной
+ */
 public class ContainerConfiguration implements Configuration {
 
     private Integer port;

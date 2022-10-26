@@ -1,4 +1,4 @@
-package ru.vsu.putin_p_a.web_server.servlet_server;
+package ru.vsu.putin_p_a.web_server.servlet_server.container;
 
 import ru.vsu.putin_p_a.App;
 import ru.vsu.putin_p_a.parser.RequestParser;
@@ -13,6 +13,9 @@ import java.lang.reflect.Method;
 import java.net.Socket;
 import java.text.ParseException;
 
+/**
+ * Цель: получает данные из клиентского сокета и отправляет ответ клиенту
+ */
 public class ClientRequest implements Runnable {
 
     private final Socket client;

@@ -1,4 +1,4 @@
-package ru.vsu.putin_p_a.web_server.servlet_server;
+package ru.vsu.putin_p_a.web_server.servlet_server.container;
 
 import ru.vsu.putin_p_a.App;
 import ru.vsu.putin_p_a.web_server.Server;
@@ -10,10 +10,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Цель: получить запрос клиента и отправить его в новый поток обработчика.
+ */
 public class WebContainer implements Server {
     public static final String SOURCE = Configuration.ROOT + "file_server_configuration.properties";
     public static final ContainerConfiguration configuration = new ContainerConfiguration();
-    public static final ServletMapper servletMapper = new ServletMapper();;
+    public static final ServletMapper servletMapper = new ServletMapper();
 
     public WebContainer() throws IOException, ServletMapException {
         configuration.load(SOURCE);

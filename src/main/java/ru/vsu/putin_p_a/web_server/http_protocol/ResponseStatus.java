@@ -1,11 +1,14 @@
 package ru.vsu.putin_p_a.web_server.http_protocol;
 
+/**
+ * Цель хранит допустимые статусы ответа
+ */
 public enum ResponseStatus {
     OK (200, "OK"),
     NOT_FOUND (404, "Not Found");
 
-    private int code;
-    private String status;
+    private final int code;
+    private final String status;
 
     ResponseStatus(int code, String status) {
         this.code = code;

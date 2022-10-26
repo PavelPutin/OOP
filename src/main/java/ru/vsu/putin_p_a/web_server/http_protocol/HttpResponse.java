@@ -4,6 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Цель: хранит данные ответа клиента и отправляет эти данные клиенту
+ * TODO: нарушает single responsibility так как метод send не соответствует абстракции.
+ */
 public class HttpResponse {
     public static final String LINE_BREAKER = "\r\n";
     private final ByteArrayOutputStream content = new ByteArrayOutputStream();

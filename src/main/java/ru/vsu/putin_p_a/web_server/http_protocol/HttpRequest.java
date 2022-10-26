@@ -1,12 +1,13 @@
 package ru.vsu.putin_p_a.web_server.http_protocol;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Цель: хранить информацию о запросе
+ * TODO: смущают методы парсинга в этом классе
+ */
 public class HttpRequest {
     private final String text;
     private final String method;
@@ -43,17 +44,12 @@ public class HttpRequest {
     private String parseMethod() throws HttpError {
         try {
             String parsed = new Scanner(text).next();
-            boolean unavailable = true;
-            for (Methods m : Methods.values()) {
-                if (parsed.equals(m.toString())) {
-                    unavailable = false;
-                    break;
-                }
-            }
-            if (unavailable) {
+            try {
+                Methods.valueOf(parsed);
+                return parsed;
+            } catch (IllegalArgumentException e) {
                 throw new HttpError("Unavailable method");
             }
-            return parsed;
         } catch (NoSuchElementException e) {
             throw new HttpError("Request doesn't have method");
         }
