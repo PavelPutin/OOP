@@ -1,87 +1,59 @@
 package ru.vsu.putin_p_a.web_server.servlet_server.servlets;
 
 import ru.vsu.putin_p_a.App;
+import ru.vsu.putin_p_a.validators.file_validators.DirectoryAccessForReadingValidator;
 import ru.vsu.putin_p_a.validators.file_validators.FileAccessForReadingValidator;
+import ru.vsu.putin_p_a.validators.file_validators.ValidationException;
+import ru.vsu.putin_p_a.validators.parameter_validators.ParameterExistsValidator;
 import ru.vsu.putin_p_a.web_server.configuration.Configuration;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpRequest;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpResponse;
-import ru.vsu.putin_p_a.web_server.http_protocol.Methods;
 import ru.vsu.putin_p_a.web_server.http_protocol.ResponseStatus;
-import ru.vsu.putin_p_a.web_server.servlet_server.WebContainer;
+import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Controller;
+import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Get;
+import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Param;
+import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.WebController;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-@WebServlet("/app/hello")
-public class AppHello implements Servlet {
-    private final AppHelloConfiguration configuration = new AppHelloConfiguration();
-    @Override
-    public void init() {
-        App.LOGGING.println("Сервлета /app/hello проинициализирована");
+@WebController("/app/hello")
+public class AppHello implements Controller {
+    private final Configuration configuration = new AppHelloConfiguration();
+    private final Path root;
+
+    public AppHello(){
         try {
             configuration.load(Configuration.ROOT);
+            root = parseRoot(configuration.getProperties().getProperty("root"));
         } catch (IOException e) {
-            throw new RuntimeException("Can't get AppHello configuration");
+            throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void doGet(HttpRequest req, HttpResponse resp, Method subApplication) {
-        String fileName = req.getParameter("file");
-        if (fileName == null) {
-            resp.setStatus(ResponseStatus.NOT_FOUND);
-            PrintWriter pw = new PrintWriter(resp.getOutputStream());
-            pw.println("""
-                        <html>
-                        <head>
-                            <meta charset="UTF-8">
-                        </head>
-                        <body>Не передано имя файла</body>
-                        </html>""");
-            pw.close();
-        } else {
-            Path fullPath = configuration.getRoot().resolve(fileName);
-            App.LOGGING.println(fullPath);
-            try {
-                new FileAccessForReadingValidator(fullPath.toFile()).validate();
-                try (FileInputStream file = new FileInputStream(fullPath.toFile())) {
-                    resp.setStatus(ResponseStatus.OK);
-                    OutputStream out = resp.getOutputStream();
-                    out.write(file.readAllBytes());
-                    out.close();
-                    App.LOGGING.printf("Файл %s прочитан%n", fullPath);
-                }
-            } catch (IOException e) {
-                resp.setStatus(ResponseStatus.NOT_FOUND);
-                PrintWriter pw = new PrintWriter(resp.getOutputStream());
-                pw.println("""
-                        <html>
-                        <head>
-                            <meta charset="UTF-8">
-                        </head>
-                        <body>Невозможно получить доступ к файлу! Проверьте имя файла и его настройки доступа.</body>
-                        </html>""");
-                pw.close();
-            }
-        }
-    }
-
-    @Get("file")
+    @Get("/file")
     public byte[] sendFile(@Param("file") String file) {
-        return new byte[4];
+        Path fullPath = root.resolve(file);
+        try (FileInputStream fis = new FileInputStream(fullPath.toFile())) {
+            return fis.readAllBytes();
+        } catch (FileNotFoundException e) {
+            return "Файл не найден".getBytes();
+        } catch (IOException e) {
+            return "Неполучилось прочитать файл".getBytes();
+        }
     }
 
-//    /app/hello/file?name=source.txt
 //    @Get("file")
-//    public int add(@Param("name") String name) {
-//        return 0;
+//    public byte[] sendFile(@Param("file") String file) {
+//        return new byte[4];
 //    }
-//
-//    public int multiply(int a, int b) {
-//        return 0;
-//    }
+
+    private Path parseRoot(String input) throws ValidationException {
+        new ParameterExistsValidator("root", input).validate();
+        Path inputRoot = Paths.get(input);
+        new DirectoryAccessForReadingValidator(inputRoot.toFile()).validate();
+        return inputRoot;
+    }
 }
