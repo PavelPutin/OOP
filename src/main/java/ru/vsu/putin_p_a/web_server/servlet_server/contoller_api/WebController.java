@@ -1,4 +1,4 @@
-package ru.vsu.putin_p_a.web_server.servlet_server.servlets;
+package ru.vsu.putin_p_a.web_server.servlet_server.contoller_api;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface WebServlet {
+public @interface WebController {
     String value();
 }

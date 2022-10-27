@@ -2,7 +2,8 @@ package ru.vsu.putin_p_a.web_server.http_protocol;
 
 public enum ResponseStatus {
     OK (200, "OK"),
-    NOT_FOUND (404, "Not Found");
+    NOT_FOUND (404, "Not Found"),
+    BAD_REQUEST(400, "Bad Request");
 
     private int code;
     private String status;

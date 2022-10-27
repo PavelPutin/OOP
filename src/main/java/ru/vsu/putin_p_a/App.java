@@ -1,7 +1,7 @@
 package ru.vsu.putin_p_a;
 
 import ru.vsu.putin_p_a.web_server.Server;
-import ru.vsu.putin_p_a.web_server.servlet_server.WebContainer;
+import ru.vsu.putin_p_a.web_server.servlet_server.container.WebContainer;
 import ru.vsu.putin_p_a.web_server.servlet_server.mapper.ServletMapException;
 
 import java.io.IOException;
