@@ -9,7 +9,6 @@ import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Get;
 import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Param;
 import ru.vsu.putin_p_a.web_server.servlet_server.servlets.DefaultNotFound;
 
-import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.InvocationTargetException;
