@@ -1,25 +1,19 @@
 package ru.vsu.putin_p_a.web_server.servlet_server.mapper;
 
 import org.reflections.Reflections;
-import ru.vsu.putin_p_a.App;
 import ru.vsu.putin_p_a.web_server.http_protocol.HttpRequest;
-import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Controller;
-import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.WebController;
-import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Get;
-import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Param;
-import ru.vsu.putin_p_a.web_server.servlet_server.servlets.DefaultNotFound;
+import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ControllerMapper {
     private final Map<String, MappedApplication> servletMap = new HashMap<>();
+    private final Map<String, MappedApplication> exceptionControllerMap = new HashMap<>();
     private MappedApplication notFound;
 
     {
@@ -30,10 +24,11 @@ public class ControllerMapper {
         }
     }
 
-    private static boolean isServlet(Class<?> c) {
+    private boolean isServlet(Class<?> c) {
         boolean isServlet = false;
         for (AnnotatedType annotatedInterface : c.getAnnotatedInterfaces()) {
-            if (annotatedInterface.getType().equals(Controller.class)) {
+            if (annotatedInterface.getType().equals(IController.class) ||
+                    annotatedInterface.getType().equals(IExceptionController.class)) {
                 isServlet = true;
                 break;
             }
@@ -45,7 +40,7 @@ public class ControllerMapper {
         return notFound;
     }
 
-    public void setNotFound(Controller notFound) throws ServletMapException {
+    public void setNotFound(IController notFound) throws ServletMapException {
         List<Method> task = Arrays.stream(notFound.getClass().getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(Get.class) && method.getAnnotation(Get.class).value().equals(""))
                 .toList();
@@ -58,15 +53,15 @@ public class ControllerMapper {
 
     public void mapServlet(String servletsPackage) throws ServletMapException {
         Reflections reflections = new Reflections(servletsPackage);
-        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(WebController.class)
-                .stream().filter(ControllerMapper::isServlet)
+        Set<Class<?>> controllerClasses = reflections.getTypesAnnotatedWith(Controller.class)
+                .stream().filter(this::isServlet)
                 .collect(Collectors.toSet());
 
         for (Class<?> clazz : controllerClasses) {
-            String annotated = clazz.getAnnotation(WebController.class).value();
-            Controller mapped;
+            String annotated = clazz.getAnnotation(Controller.class).value();
+            IController mapped;
             try {
-                mapped = (Controller) clazz.getConstructors()[0].newInstance();
+                mapped = (IController) clazz.getConstructors()[0].newInstance();
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
                 throw new ServletMapException(String.format("Can't create servlet %s потому что %s", annotated, e.getCause()));
             }
@@ -79,23 +74,29 @@ public class ControllerMapper {
                 String application = m.getAnnotation(Get.class).value();
 
                 List<String> paramsNames = new ArrayList<>();
-                Annotation[][] parameterAnnotations = m.getParameterAnnotations();
-                for (Annotation[] parameter : parameterAnnotations) {
-                    for (Annotation annotation : parameter) {
-                        if (annotation.annotationType().equals(Param.class)) {
-                            String parameterName = ((Param) annotation).value();
-                            paramsNames.add(parameterName);
-                        } else {
-                            throw new ServletMapException(String.format("Задача %s в контролере %s содержит неаннотированные параметры", annotated, application));
+                if (!(mapped instanceof IExceptionController)) {
+                    Annotation[][] parameterAnnotations = m.getParameterAnnotations();
+                    for (Annotation[] parameter : parameterAnnotations) {
+                        for (Annotation annotation : parameter) {
+                            if (annotation.annotationType().equals(Param.class)) {
+                                String parameterName = ((Param) annotation).value();
+                                paramsNames.add(parameterName);
+                            } else {
+                                throw new ServletMapException(String.format("Задача %s в контролере %s содержит неаннотированные параметры", annotated, application));
+                            }
                         }
                     }
                 }
                 String full = annotated + application;
-                if (servletMap.containsKey(full)) {
+                if (servletMap.containsKey(full) || exceptionControllerMap.containsKey(full)) {
                     throw new ServletMapException(String.format("Servlet %s already exists.", full));
                 }
 
-                servletMap.put(full, new MappedApplication(mapped, m, paramsNames));
+                if (mapped instanceof IExceptionController) {
+                    exceptionControllerMap.put(full, new MappedApplication(mapped, m, paramsNames));
+                } else {
+                    servletMap.put(full, new MappedApplication(mapped, m, paramsNames));
+                }
             }
         }
     }
@@ -114,5 +115,13 @@ public class ControllerMapper {
             throw new MissingParametersException("Переданы не все параметры");
         }
         return application;
+    }
+
+    public MappedApplication getExceptionController(String uri) throws ServletAccessException {
+        if (!exceptionControllerMap.containsKey(uri)) {
+            throw new ServletAccessException(String.format("По адресу %s ничего не найдено", uri));
+        }
+        MappedApplication exceptionController = exceptionControllerMap.get(uri);
+        return exceptionController;
     }
 }

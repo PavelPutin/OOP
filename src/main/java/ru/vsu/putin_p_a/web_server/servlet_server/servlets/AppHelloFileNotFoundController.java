@@ -2,20 +2,21 @@ package ru.vsu.putin_p_a.web_server.servlet_server.servlets;
 
 import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Controller;
 import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.Get;
-import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.WebController;
+import ru.vsu.putin_p_a.web_server.servlet_server.contoller_api.IExceptionController;
 
-@WebController("")
-public class DefaultNotFound implements Controller {
+@Controller("/app/hello/fileNotFound")
+public class AppHelloFileNotFoundController implements IExceptionController {
 
+    @Override
     @Get("")
-    public String doGet() {
+    public String showErrorPage(Exception e) {
         return """
                 <html lang="en">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Page not found</title>
+                    <title>File not found</title>
                 </head>
-                <body><h1>Error 404: Page not found</h1></body>
+                <body><h1>Selected file not found</h1></body>
                 </html>""";
     }
 }

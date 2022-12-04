@@ -41,8 +41,7 @@ public class DispatcherServlets {
             resp.send(client.getOutputStream());
         } catch (IOException e) {
             processIOException(e);
-        } catch (HttpError | ParseException | MissingParametersException | InvocationTargetException |
-                 IllegalAccessException | ServletAccessException e) {
+        } catch (HttpError | ParseException | IllegalAccessException | InvocationTargetException e) {
             App.LOGGING.println(e.getMessage());
         } finally {
             try {
@@ -53,13 +52,17 @@ public class DispatcherServlets {
         }
     }
 
-    private HttpResponse doGet(HttpRequest req) throws MissingParametersException, InvocationTargetException, IllegalAccessException, ServletAccessException, IOException {
+    private HttpResponse doGet(HttpRequest req) throws IllegalAccessException, IOException, InvocationTargetException {
         HttpResponse resp = new HttpResponse();
         resp.setStatus(ResponseStatus.NOT_FOUND);
         MappedApplication mappedApplication = mapper.getNotFound();
         if (mapper.containController(req)) {
-            mappedApplication = mapper.getApplication(req);
-            resp.setStatus(ResponseStatus.OK);
+            try {
+                mappedApplication = mapper.getApplication(req);
+                resp.setStatus(ResponseStatus.OK);
+            } catch (MissingParametersException | ServletAccessException e) {
+                App.LOGGING.println(e.getMessage());
+            }
         }
         Object[] parameterValues = new Object[mappedApplication.parameterNames().size()];
 
@@ -68,7 +71,21 @@ public class DispatcherServlets {
             parameterValues[i++] = req.getParameter(parameterName);
         }
 
-        Object result = mappedApplication.task().invoke(mappedApplication.controller(), parameterValues);
+        Object result;
+        try {
+            result = mappedApplication.task().invoke(mappedApplication.controller(), parameterValues);
+        } catch (InvocationTargetException e) {
+            ControllerExceptionContainer container = (ControllerExceptionContainer) e.getTargetException();
+            MappedApplication mapped;
+            try {
+                mapped = mapper.getExceptionController(container.getHandlerUri());
+                resp.setStatus(container.getStatus());
+            } catch (ServletAccessException ex) {
+                mapped = mapper.getNotFound();
+                resp.setStatus(ResponseStatus.NOT_FOUND);
+            }
+            result = mapped.task().invoke(mapped.controller(), container.getCause());
+        }
         OutputStream outputStream = resp.getOutputStream();
         if (result instanceof byte[]) {
             outputStream.write((byte[]) result);
