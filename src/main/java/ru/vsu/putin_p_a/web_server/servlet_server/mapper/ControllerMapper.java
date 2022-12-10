@@ -47,7 +47,7 @@ public class ControllerMapper {
         if (task.size() == 1) {
             this.notFound = new MappedApplication(notFound, task.get(0), new ArrayList<>());
         } else {
-            throw new ServletMapException("\"Not found\" controller can't understand what to execute");
+            throw new ServletMapException("\"Not found\" controller can't understand what to execute.");
         }
     }
 
@@ -63,7 +63,7 @@ public class ControllerMapper {
             try {
                 mapped = (IController) clazz.getConstructors()[0].newInstance();
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw new ServletMapException(String.format("Can't create servlet %s потому что %s", annotated, e.getCause()));
+                throw new ServletMapException(String.format("Can't create servlet %s because %s.", annotated, e.getCause()));
             }
 
             List<Method> tasks = Arrays.stream(clazz.getDeclaredMethods())
@@ -82,14 +82,14 @@ public class ControllerMapper {
                                 String parameterName = ((Param) annotation).value();
                                 paramsNames.add(parameterName);
                             } else {
-                                throw new ServletMapException(String.format("Задача %s в контролере %s содержит неаннотированные параметры", annotated, application));
+                                throw new ServletMapException(String.format("Task %s in controller %s contains not annotated parameters.", annotated, application));
                             }
                         }
                     }
                 }
                 String full = annotated + application;
                 if (servletMap.containsKey(full) || exceptionControllerMap.containsKey(full)) {
-                    throw new ServletMapException(String.format("Servlet %s already exists.", full));
+                    throw new ServletMapException(String.format("The controller %s already exists.", full));
                 }
 
                 if (mapped instanceof IExceptionController) {
@@ -107,20 +107,21 @@ public class ControllerMapper {
 
     public MappedApplication getApplication(HttpRequest req) throws MissingParametersException, ServletAccessException {
         if (!servletMap.containsKey(req.getUri())) {
-            throw new ServletAccessException(String.format("По адресу %s ничего не найдено", req.getUri()));
+            throw new ServletAccessException(String.format("Nothing was found at the address: %s.", req.getUri()));
         }
         MappedApplication application = servletMap.get(req.getUri());
         boolean hasAllParameter = req.getParameters().keySet().containsAll(application.parameterNames());
         if (!hasAllParameter) {
-            throw new MissingParametersException("Переданы не все параметры");
+            throw new MissingParametersException("Not all parameters were passed.");
         }
         return application;
     }
 
     public MappedApplication getExceptionController(String uri) throws ServletAccessException {
         if (!exceptionControllerMap.containsKey(uri)) {
-            throw new ServletAccessException(String.format("По адресу %s ничего не найдено", uri));
+            throw new ServletAccessException(String.format("Nothing was found at the address: %s.", uri));
         }
+        // todo исправить inline variable
         MappedApplication exceptionController = exceptionControllerMap.get(uri);
         return exceptionController;
     }

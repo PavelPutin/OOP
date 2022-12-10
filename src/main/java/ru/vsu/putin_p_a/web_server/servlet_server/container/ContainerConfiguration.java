@@ -19,7 +19,7 @@ public class ContainerConfiguration implements Configuration {
         try (FileInputStream fis = new FileInputStream(source)) {
             properties.load(fis);
         } catch (IOException e) {
-            throw new IOException("Возникла ошибка получения параметров");
+            throw new IOException("Can't get external parameters");
         }
     }
 

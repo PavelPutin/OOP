@@ -20,7 +20,7 @@ public class DispatcherServlets {
     }
 
     public void formResponseFor(Socket client) {
-        App.LOGGING.println("Начата обработка клиентского запроса");
+        App.LOGGING.println("Request processing was started.");
         try {
             RequestParser parser = new RequestParser(client.getInputStream());
             String content = parser.parse();
@@ -34,7 +34,7 @@ public class DispatcherServlets {
                 resp = new HttpResponse();
                 resp.setStatus(ResponseStatus.BAD_REQUEST);
                 PrintWriter writer = new PrintWriter(resp.getOutputStream());
-                writer.print("Несуществующий метод запроса");
+                writer.print("Unsupported request method.");
                 writer.close();
             }
 
@@ -42,6 +42,7 @@ public class DispatcherServlets {
         } catch (IOException e) {
             processIOException(e);
         } catch (HttpError | ParseException | IllegalAccessException | InvocationTargetException e) {
+            // todo добавить отдельный обработчик ParseException - ошибки получения запроса. Создать специальное исключение
             App.LOGGING.println(e.getMessage());
         } finally {
             try {

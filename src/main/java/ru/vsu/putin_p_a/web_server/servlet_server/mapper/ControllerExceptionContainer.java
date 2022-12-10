@@ -21,6 +21,7 @@ public class ControllerExceptionContainer extends RuntimeException {
         return status;
     }
 
+    //todo убрать
     @Override
     public String getMessage() {
         return "container";

@@ -40,6 +40,8 @@ public class HttpRequest {
         return parameters.get(name);
     }
 
+    // todo: переместить parse методы отсюда
+
     private String parseMethod() throws HttpError {
         try {
             String parsed = new Scanner(text).next();
@@ -70,7 +72,7 @@ public class HttpRequest {
 
             return parsed;
         } catch (NoSuchElementException e) {
-            throw new HttpError("Request doesn't have method");
+            throw new HttpError("Can't parse uri");
         }
     }
 
@@ -86,7 +88,7 @@ public class HttpRequest {
             }
             return parsed;
         } catch (NoSuchElementException e) {
-            throw new HttpError("Request doesn't have method");
+            throw new HttpError("Can't parse parameters");
         }
     }
 }

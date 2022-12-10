@@ -17,7 +17,7 @@ public class RequestParser {
 
     public String parse() throws ParseException {
         StringBuilder parsed = new StringBuilder();
-        App.LOGGING.println("Начат парсинг");
+        App.LOGGING.println("Parsing was started.");
         int totalBytes = 0;
         try {
             while (!parsed.toString().contains("\r\n\r\n")) {
@@ -35,10 +35,10 @@ public class RequestParser {
                 totalBytes++;
             }
 
-            App.LOGGING.println("Произошёл парсинг");
+            App.LOGGING.println("Parsing was completed.");
             return parsed.toString();
         } catch (IOException e) {
-            throw new ParseException("Возникли ошибка разбора запроса", totalBytes);
+            throw new ParseException("The request parsing error occurred.", totalBytes);
         }
     }
 }
