@@ -14,7 +14,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class WebContainer implements Server {
-    public static final String SOURCE = Configuration.ROOT + "file_server_configuration.properties";
+    public static final String SOURCE = Configuration.ROOT + "server_configuration.properties";
     private final DispatcherServlets dispatcherServlets = new DispatcherServlets();
     private final Integer port;
 
@@ -43,13 +43,13 @@ public class WebContainer implements Server {
     }
 
     private Integer parsePort(String input) throws ValidationException {
-        new ParameterExistsValidator("input", input).validate();
+        new ParameterExistsValidator("port", input).validate();
         new PortValidator(input).validate();
         return Integer.valueOf(input);
     }
 
     private String parseServletsPackage(String input) throws ValidationException {
-        new ParameterExistsValidator("Package", input).validate();
+        new ParameterExistsValidator("servlets-package", input).validate();
         return input;
     }
 }

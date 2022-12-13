@@ -121,8 +121,6 @@ public class ControllerMapper {
         if (!exceptionControllerMap.containsKey(uri)) {
             throw new ServletAccessException(String.format("Nothing was found at the address: %s.", uri));
         }
-        // todo исправить inline variable
-        MappedApplication exceptionController = exceptionControllerMap.get(uri);
-        return exceptionController;
+        return exceptionControllerMap.get(uri);
     }
 }

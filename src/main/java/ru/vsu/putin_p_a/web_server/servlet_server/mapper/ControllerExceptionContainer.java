@@ -20,10 +20,4 @@ public class ControllerExceptionContainer extends RuntimeException {
     public ResponseStatus getStatus() {
         return status;
     }
-
-    //todo убрать
-    @Override
-    public String getMessage() {
-        return "container";
-    }
 }
