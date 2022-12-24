@@ -5,7 +5,8 @@ public enum ResponseStatus {
     BAD_REQUEST(400, "Bad Request"),
     NOT_FOUND (404, "Not Found"),
     NOT_ACCEPTABLE(406, "Not Acceptable"),
-    UNSUPPORTED_MEDIA_TYPE(415, "Unsupported Media Type");
+    UNSUPPORTED_MEDIA_TYPE(415, "Unsupported Media Type"),
+    INTERNAL_SERVER_ERROR(500, "Internal Server Error");
 
     private int code;
     private String status;

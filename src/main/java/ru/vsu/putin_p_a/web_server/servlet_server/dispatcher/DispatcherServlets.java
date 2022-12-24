@@ -85,7 +85,7 @@ public class DispatcherServlets {
                 mapped = mapper.getNotFound();
                 resp.setStatus(ResponseStatus.NOT_FOUND);
             }
-            result = mapped.task().invoke(mapped.controller(), container.getCause());
+            result = mapped.task().invoke(mapped.controller(), container.getCause(), container.getStatus());
         }
         OutputStream outputStream = resp.getOutputStream();
         if (result instanceof byte[]) {
